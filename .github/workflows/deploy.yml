@@ -1,3 +1,22 @@
+name: Test SSH Connection
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  ssh-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test SSH Connection
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            echo "✅ Connected successfully to $(hostname)"
 name: Deploy to Server
 
 on:
