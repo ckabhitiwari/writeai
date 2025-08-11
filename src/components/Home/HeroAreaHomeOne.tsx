@@ -19,7 +19,7 @@ const HeroAreaHomeOne = () => {
                   <a className="play-btn video-init"
                     onClick={() => setIsVideoOpen(true)}
                     style={{ cursor: "pointer" }}>
-                    <img src="assets/images/hero/play-btn.svg" alt="" />Watch video
+                    <img src="assets/images/hero/play-btn.svg" alt="" />Watcch video
                   </a>
                 </div>
               </div>
