@@ -1,4 +1,4 @@
-import DemoSidebar from "@/common/DemoSidebar";
+
 import ScrollToTop from "@/common/ScrollToTop"; 
 
 const Wrapper = ({ children }: any) => {
@@ -7,7 +7,6 @@ const Wrapper = ({ children }: any) => {
 	return <>
   {children}
   <ScrollToTop />
-  <DemoSidebar />
   </>;
 };
 

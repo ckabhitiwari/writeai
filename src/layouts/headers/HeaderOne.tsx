@@ -1,19 +1,31 @@
-"use client"
+"use client";
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import MobileMenu from './MobileMenu';
 import useSticky from '@/hooks/use-sticky';
 
 const HeaderOne = () => {
   useSticky();
   const [openMenu, setOpenMenu] = useState(false);
+  const [user, setUser] = useState<{ firstName: string } | null>(null);
 
-
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await fetch('/api/auth/me');
+        if (res.ok) {
+          const data = await res.json();
+          setUser(data);
+        }
+      } catch (error) {
+        console.error('Error fetching user:', error);
+      }
+    };
+    fetchUser();
+  }, []);
 
   return (
     <>
-
-
       <header className="site-header uxora-header-section" id="sticky-menu">
         <div className="container">
           <div className="row gx-3 align-items-center justify-content-between">
@@ -49,10 +61,18 @@ const HeaderOne = () => {
               <div className="uxora-header-info-wraper2">
                 <div className="uxora-header-info-content">
                   <ul>
-                    <li><Link href="/sign-in">Login</Link></li>
+                    {user ? (
+                      <li><Link href="/account">My Account</Link></li>
+                    ) : (
+                      <li><Link href="/sign-in">Login</Link></li>
+                    )}
                   </ul>
                 </div>
-                <a className="uxora-default-btn uxora-header-btn" href="sign-up.html">Try for free</a>
+                {user ? (
+                  <Link className="uxora-default-btn uxora-header-btn" href="/account">Dashboard</Link>
+                ) : (
+                  <Link className="uxora-default-btn uxora-header-btn" href="/sign-up">Try for free</Link>
+                )}
               </div>
               <div className="uxora-header-menu">
                 <nav className="navbar site-navbar justify-content-between">
