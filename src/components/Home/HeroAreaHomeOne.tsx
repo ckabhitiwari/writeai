@@ -12,7 +12,7 @@ const HeroAreaHomeOne = () => {
           <div className="row" data-anime="onview: -100; targets: >*; translateY: [48, 0]; opacity: [0, 1]; easing: spring(1, 80, 10, 0); duration: 450; delay: anime.stagger(100, {start: 200});">
             <div className="col-lg-7">
               <div className="uxora-hero-content">
-                <h1 className="title">Write smarter, faster, and better—powered by AI!</h1>
+                <h1 className="title">Write smartere, faster, and better—powered by AI!</h1>
                 <p>Unleash the power of AI to effortlessly create engaging content. Whether you're a marketer, blogger, or business owner, our AI writing tool streamlines your writing process, saves time, and boosts creativity.</p>
                 <div className="uxora-hero-btn mt-50">
                   <a href="contact-us.html" className="uxora-default-btn">Start writing for free</a>
