@@ -16,7 +16,6 @@ const HeroAreaHomeOne = () => {
                 <p>Unleash the power of AI to effortlessly create engaging content. Whether you're a marketer, blogger, or business owner, our AI writing tool streamlines your writing process, saves time, and boosts creativity.</p>
                 <div className="uxora-hero-btn mt-50">
                   <a href="contact-us.html" className="uxora-default-btn">Start writing for free</a>
-                  
                 </div>
               </div>
             </div>
