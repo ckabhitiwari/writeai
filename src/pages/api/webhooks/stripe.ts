@@ -5,9 +5,10 @@ import prisma from "@/lib/prisma";
 
 export const config = { api: { bodyParser: false } };
 
-// ✅ Use correct Stripe API version
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
-
+// ✅ Use correct Stripe API version (leave undefined for latest if needed)
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+  apiVersion: "2025-07-30.basil",
+});
 
 async function readRawBody(req: any): Promise<Buffer> {
   const chunks: Buffer[] = [];
@@ -21,8 +22,11 @@ function toDate(epochSeconds: number | null | undefined): Date {
   return new Date((epochSeconds ?? Math.floor(Date.now() / 1000)) * 1000);
 }
 
-// ... rest of your webhook handler remains unchanged
-
+function getPeriodEnd(sub: Stripe.Subscription): Date {
+  // ✅ safely extract regardless of Stripe TS typings
+  const raw = (sub as any).current_period_end ?? (sub as any).currentPeriodEnd;
+  return toDate(raw);
+}
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") return res.status(405).end("Method Not Allowed");
@@ -49,11 +53,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         if (!customerId || !subscriptionId) break;
 
-        // Get full subscription to read price & periods
+        // Fetch full subscription to read price & billing period
         const response = await stripe.subscriptions.retrieve(subscriptionId, {
-           expand: ["items.data.price"],
+          expand: ["items.data.price"],
         });
-        const sub = response as unknown as Stripe.Subscription;
+        const sub = response as Stripe.Subscription;
 
         const item = sub.items.data[0];
         const priceId =
@@ -63,7 +67,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           break;
         }
 
-        // Find our user by stripeCustomerId
         const user = await prisma.user.findFirst({
           where: { stripeCustomerId: customerId },
         });
@@ -84,16 +87,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           create: {
             userId: user.id,
             stripeSubscriptionId: sub.id,
-            stripePriceId: priceId,               // ✅ REQUIRED NOW
+            stripePriceId: priceId,
             status: sub.status,
             plan,
-            currentPeriodEnd: toDate(sub.currentPeriodEnd),
+            currentPeriodEnd: getPeriodEnd(sub), // ✅ safe extraction
           },
           update: {
-            stripePriceId: priceId,               // ✅ keep updated
+            stripePriceId: priceId,
             status: sub.status,
             plan,
-            currentPeriodEnd: toDate(sub.currentPeriodEnd),
+            currentPeriodEnd: getPeriodEnd(sub),
           },
         });
 
@@ -115,14 +118,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           .update({
             where: { stripeSubscriptionId: sub.id },
             data: {
-              stripePriceId: priceId,             // ✅ ensure present on update
+              stripePriceId: priceId,
               status: sub.status,
               plan,
-              currentPeriodEnd: toDate(sub.currentPeriodEnd),
+              currentPeriodEnd: getPeriodEnd(sub),
             },
           })
           .catch(async () => {
-            // If row not yet created, link via customer → user
             const user = await prisma.user.findFirst({
               where: { stripeCustomerId: sub.customer as string },
             });
@@ -131,10 +133,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 data: {
                   userId: user.id,
                   stripeSubscriptionId: sub.id,
-                  stripePriceId: priceId,         // ✅ required
+                  stripePriceId: priceId,
                   status: sub.status,
                   plan,
-                  currentPeriodEnd: toDate(sub.currentPeriodEnd),
+                  currentPeriodEnd: getPeriodEnd(sub),
                 },
               });
             }
@@ -182,4 +184,3 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(500).send("Webhook handler failed");
   }
 }
-// uremoved curent period time.
