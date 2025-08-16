@@ -147,19 +147,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
 
       case "invoice.payment_failed": {
-        const inv = event.data.object as Stripe.Invoice;
-        const subscriptionId = inv.subscription as string | undefined;
-        if (subscriptionId) {
-          await prisma.subscription
-            .update({
-              where: { stripeSubscriptionId: subscriptionId },
-              data: { status: "past_due" },
-            })
-            .catch(() => {});
-          console.log("⚠ invoice.payment_failed -> past_due", subscriptionId);
-        }
-        break;
-      }
+  const inv = event.data.object as Stripe.Invoice & { subscription?: string };
+  const subscriptionId = inv.subscription;
+  if (subscriptionId) {
+    await prisma.subscription
+      .update({
+        where: { stripeSubscriptionId: subscriptionId },
+        data: { status: "past_due" },
+      })
+      .catch(() => {});
+    console.log("⚠ invoice.payment_failed -> past_due", subscriptionId);
+  }
+  break;
+}
+
 
       case "customer.subscription.deleted": {
         const sub = event.data.object as Stripe.Subscription;
