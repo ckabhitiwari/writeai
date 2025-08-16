@@ -4,7 +4,8 @@ import prisma from "@/lib/prisma";
 import { getUserIdFromReq } from "@/lib/auth";
 
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, { apiVersion: "2024-06-20" });
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
+
 
 // Map your plans -> Stripe Price IDs (fill these with real price IDs from Stripe)
 const PRICE_MAP: Record<string, string> = {
