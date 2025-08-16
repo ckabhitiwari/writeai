@@ -50,9 +50,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         if (!customerId || !subscriptionId) break;
 
         // Get full subscription to read price & periods
-        const sub = await stripe.subscriptions.retrieve(subscriptionId, {
-          expand: ["items.data.price"],
+        const response = await stripe.subscriptions.retrieve(subscriptionId, {
+           expand: ["items.data.price"],
         });
+        const sub = response as unknown as Stripe.Subscription;
 
         const item = sub.items.data[0];
         const priceId =
