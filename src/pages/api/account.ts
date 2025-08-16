@@ -9,7 +9,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const user = await prisma.user.findUnique({
     where: { id: userId },
     select: {
-      id: true, email: true, name: true, stripeCustomerId: true,
+      id: true,
+      email: true,
+      firstName: true,
+      lastName: true,
+      stripeCustomerId: true,
       subscriptions: {
         orderBy: { updatedAt: "desc" },
         take: 1,
@@ -17,5 +21,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     },
   });
 
-  return res.status(200).json(user);
+  if (!user) return res.status(404).json({ error: "User not found" });
+
+  // Add fullName for convenience
+  const response = {
+    ...user,
+    fullName: `${user.firstName} ${user.lastName}`,
+  };
+
+  return res.status(200).json(response);
 }
