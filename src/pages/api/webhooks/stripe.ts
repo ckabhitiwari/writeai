@@ -87,13 +87,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             stripePriceId: priceId,               // ✅ REQUIRED NOW
             status: sub.status,
             plan,
-            currentPeriodEnd: toDate(sub.current_period_end),
+            currentPeriodEnd: toDate(sub.currentPeriodEnd),
           },
           update: {
             stripePriceId: priceId,               // ✅ keep updated
             status: sub.status,
             plan,
-            currentPeriodEnd: toDate(sub.current_period_end),
+            currentPeriodEnd: toDate(sub.currentPeriodEnd),
           },
         });
 
@@ -118,7 +118,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               stripePriceId: priceId,             // ✅ ensure present on update
               status: sub.status,
               plan,
-              currentPeriodEnd: toDate(sub.current_period_end),
+              currentPeriodEnd: toDate(sub.currentPeriodEnd),
             },
           })
           .catch(async () => {
@@ -134,7 +134,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                   stripePriceId: priceId,         // ✅ required
                   status: sub.status,
                   plan,
-                  currentPeriodEnd: toDate(sub.current_period_end),
+                  currentPeriodEnd: toDate(sub.currentPeriodEnd),
                 },
               });
             }
