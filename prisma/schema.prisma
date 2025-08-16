@@ -13,5 +13,22 @@ model User {
   lastName   String
   email      String   @unique
   password   String
-  createdAt  DateTime @default(now())
+  stripeCustomerId String?        @unique
+  subscriptions    Subscription[]
+  createdAt        DateTime       @default(now())
 }
+model Subscription {
+  id                   Int      @id @default(autoincrement())
+  userId               Int
+  user                 User     @relation(fields: [userId], references: [id])
+  stripeSubscriptionId String   @unique
+  stripePriceId        String
+  status               String
+  plan                 String
+  currentPeriodEnd     DateTime
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@index([userId]) // ✅ proper index syntax
+}
+

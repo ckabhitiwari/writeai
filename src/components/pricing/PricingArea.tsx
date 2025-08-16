@@ -1,65 +1,37 @@
 "use client";
+import { useRouter } from "next/router";
+
 
 import { useEffect } from "react";
 
+
+const PLAN_TO_PRICE: Record<string, string> = {
+  starter: "price_1Rtb80SBODWesqRmlLbtpVk5",
+  pro: "price_1RtbCUSBODWesqRm2JAs9qTT",
+  enterprise: "price_1RtbD0SBODWesqRmmuwNfrt0",
+};
+
+async function startCheckout(planKey: keyof typeof PLAN_TO_PRICE) {
+  // Optional: verify logged-in via your cookie/JWT check endpoint
+  const res = await fetch("/api/checkout_sessions", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ plan: planKey }),
+  });
+
+  if (res.status === 401) {
+    // not logged in → redirect to login and come back
+    window.location.href = `/sign-in?redirectTo=/pricing`;
+    return;
+  }
+
+  const data = await res.json();
+  if (data.url) window.location.href = data.url;
+  else alert(data.error || "Unable to start checkout");
+}
+
 const PricingArea = () => {
 
-  useEffect(() => {
-    const toggleBtn = document.querySelector<HTMLDivElement>("#l5-pricing-btn .toggle-btn");
-    const pricingTriggers = document.querySelectorAll<HTMLElement>("[data-pricing-trigger]");
-
-    // Toggle between monthly-active and yearly-active
-    const handleToggleClick = (e: Event) => {
-      const target = e.target as HTMLElement;
-      const parent = target.closest("#l5-pricing-btn");
-      if (!parent) return;
-
-      const isMonthly = parent.classList.contains("monthly-active");
-
-      target.classList.toggle("clicked");
-      parent.classList.remove(isMonthly ? "monthly-active" : "yearly-active");
-      parent.classList.add(isMonthly ? "yearly-active" : "monthly-active");
-    };
-
-    // Handle pricing trigger toggle
-    const handlePricingTriggerClick = (e: Event) => {
-      const trigger = e.currentTarget as HTMLElement;
-      const siblings = Array.from(trigger.parentElement?.children || []);
-
-      siblings.forEach((sibling) => {
-        (sibling as HTMLElement).classList.remove("active");
-      });
-      trigger.classList.add("active");
-
-      const targetSelector = trigger.getAttribute("data-target");
-      if (!targetSelector) return;
-
-      const targetElement = document.querySelector<HTMLElement>(targetSelector);
-      if (!targetElement) return;
-
-      const isMonthly = targetElement.getAttribute("data-value-active") === "monthly";
-      console.log("Currently monthly:", isMonthly);
-      targetElement.setAttribute("data-value-active", isMonthly ? "yearly" : "monthly");
-    };
-
-    if (toggleBtn) {
-      toggleBtn.addEventListener("click", handleToggleClick);
-    }
-
-    pricingTriggers.forEach((trigger) => {
-      trigger.addEventListener("click", handlePricingTriggerClick);
-    });
-
-    // Cleanup on unmount
-    return () => {
-      if (toggleBtn) {
-        toggleBtn.removeEventListener("click", handleToggleClick);
-      }
-      pricingTriggers.forEach((trigger) => {
-        trigger.removeEventListener("click", handlePricingTriggerClick);
-      });
-    };
-  }, []);
 
   return (
     <>
@@ -68,13 +40,6 @@ const PricingArea = () => {
         <div className="container" data-anime="onview: -100; targets: >*; translateY: [48, 0]; opacity: [0, 1]; easing: spring(1, 80, 10, 0); duration: 450; delay: anime.stagger(100, {start: 200});">
           <div className="uxora-section-title center max-width-800" data-anime="onview: -100; targets: >*; translateY: [48, 0]; opacity: [0, 1]; easing: spring(1, 80, 10, 0); duration: 450; delay: anime.stagger(100, {start: 200});">
             <h2>Pick a perfect pricing plan for your preference</h2>
-          </div>
-          <div className="pricing-btn">
-            <label>Billed Monthly</label>
-            <div className="toggle-btn">
-              <input className="form-check-input btn-toggle price-deck-trigger" type="checkbox" id="flexSwitchCheckDefault" data-pricing-trigger data-target="#table-price-value" defaultChecked />
-            </div>
-            <label>Billed Annually <span>(10% Discount)</span></label>
           </div>
           <div className="uxora-pricing-wrap" id="table-price-value" data-pricing-dynamic data-value-active="monthly">
             <div className="uxora-pricing-item mt-50">
@@ -98,7 +63,13 @@ const PricingArea = () => {
                 </ul>
               </div>
               <div className="uxora-pricing-btn">
-                <a className="uxora-default-btn pricing-btn" href="contact-us.html">Choose a plan</a>
+                <button
+                  type="button"
+                  className="uxora-default-btn pricing-btn"
+                  onClick={() => startCheckout("starter")}
+                >
+                  Choose a plan
+                </button>
               </div>
               <div className="uxora-pricing-shape">
                 <img src="assets/images/pricing/icon1.svg" alt="" />
@@ -127,7 +98,13 @@ const PricingArea = () => {
                 </ul>
               </div>
               <div className="uxora-pricing-btn">
-                <a className="uxora-default-btn pricing-btn" href="contact-us.html">Choose a plan</a>
+                <button
+                  type="button"
+                  className="uxora-default-btn pricing-btn"
+                  onClick={() => startCheckout("pro")}
+                >
+                  Choose a plan
+                </button>
               </div>
               <div className="uxora-pricing-shape">
                 <img src="assets/images/pricing/icon2.svg" alt="" />
@@ -155,7 +132,13 @@ const PricingArea = () => {
                 </ul>
               </div>
               <div className="uxora-pricing-btn">
-                <a className="uxora-default-btn pricing-btn" href="contact-us.html">Choose a plan</a>
+                <button
+                  type="button"
+                  className="uxora-default-btn pricing-btn"
+                  onClick={() => startCheckout("enterprise")}
+                >
+                  Choose a plan
+                </button>
               </div>
               <div className="uxora-pricing-shape">
                 <img src="assets/images/pricing/icon1.svg" alt="" />
