@@ -56,7 +56,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     line_items: [{ price: priceId, quantity: 1 }],
     success_url: `${siteUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${siteUrl}/pricing`,
-    billing_address_collection: "auto",
+    customer_update: {
+      name: 'auto',     // ✅ automatically update name
+      address: 'auto',  // ✅ automatically update address
+    },
+    billing_address_collection: "required",
     allow_promotion_codes: true,
     // Optional: pass your user/plan for webhook convenience
     metadata: { appUserId: String(user.id), plan },
