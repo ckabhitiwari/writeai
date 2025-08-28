@@ -31,17 +31,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   let stripeCustomerId = user.stripeCustomerId ?? undefined;
   if (!stripeCustomerId) {
     const customer = await stripe.customers.create({
-      email: user.email,
-      metadata: { appUserId: String(user.id) },
-      address: {
-        line1: user.addressLine1,
-        line2: user.addressLine2,
-        city: user.city,
-        state: user.state,
-        postal_code: user.postalCode,
-        country: user.country,
-      },
-    });
+  email: user.email,
+  name: `${user.firstName} ${user.lastName}`,
+  metadata: { appUserId: String(user.id) },
+});
+
     stripeCustomerId = customer.id;
     await prisma.user.update({
       where: { id: user.id },
