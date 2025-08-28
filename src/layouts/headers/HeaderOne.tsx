@@ -43,15 +43,6 @@ const HeaderOne = () => {
                     <li><Link href="/">Home</Link></li>
                     <li><Link href="/solutions">Solutions</Link></li>
                     <li><Link href="/pricing">Pricing</Link></li>
-                    <li className="menu-item-has-children">
-                      <a href="#">Pages</a>
-                      <ul className="sub-menu">
-                        <li><Link href="/faq">FAQs</Link></li>
-                        <li><Link href='/sign-in'>Sign In</Link></li>
-                        <li><Link href='/sign-up'>Sign-Up</Link></li>
-                        <li><Link href='/forgot-password'>Forgot Password</Link></li>
-                      </ul>
-                    </li>
                     <li><Link href="/contact-us">Contact</Link></li>
                   </ul>
                 </nav>
