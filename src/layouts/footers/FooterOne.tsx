@@ -38,7 +38,7 @@ const FooterOne = () => {
                     <Link href="/">Home</Link>
                   </li>
                   <li>
-                    <Link href="/solutions">Solutionss</Link>
+                    <Link href="/solutions">Solutions</Link>
                   </li>
                   <li>
                     <Link href="/pricing">Pricing</Link>
@@ -99,7 +99,7 @@ const FooterOne = () => {
           </div>
           <div className="uxora-footer-bottom-wrap">
             <div className="uxora-footer-bottom-text">
-              <p>Made with ♥︎ Uxora. All Rights Reserved by Mthemeus</p>
+              <p>All Rights Reserved by Codingkart</p>
             </div>
             <div className="uxora-social-wrap">
               <ul>
